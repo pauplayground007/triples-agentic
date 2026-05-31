@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.0] — 2026-05-31
+
+### Breaking Changes
+- add automated release workflow (`5714541`)
+
+### Added
+- initial release — TripleS software engineering agent orchestrator (`e468b32`)
+
+### Fixed
+- use version-sorted tags and guard against duplicate tag (`9b33aa3`)
+
+[2.0.0]: https://github.com/pauplayground007/triples-agentic/compare/v1.0.0...v2.0.0
+
 ## [1.0.0] — 2026-05-31
 
 ### Added
