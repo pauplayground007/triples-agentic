@@ -12,6 +12,7 @@ concurrency:
 
 permissions:
   contents: write   # push tags + commits, create releases
+  id-token: write   # npm provenance attestation
 
 jobs:
   release:
@@ -29,6 +30,12 @@ jobs:
         with:
           fetch-depth: 0          # need all commits + tags for version calculation
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Fetch all tags
         run: git fetch --tags --force
@@ -64,3 +71,9 @@ jobs:
           gh release create "${{ steps.release.outputs.tag }}" \
             --title "Release ${{ steps.release.outputs.tag }}" \
             --notes-file .release-notes.md
+
+      - name: Publish to npm
+        if: steps.release.outputs.skip != 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance --access public
