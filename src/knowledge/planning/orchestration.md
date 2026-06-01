@@ -1,3 +1,8 @@
+---
+name: orchestration
+description: Agent workflow sequencing, delegation protocol, escalation rules, and artifact tracking
+---
+
 # Orchestration Knowledge — Workflow Coordination
 
 ## Role of the Engineering Manager in Agent Orchestration

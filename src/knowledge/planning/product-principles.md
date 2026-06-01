@@ -1,4 +1,9 @@
-# Product Management Knowledge
+---
+name: product-principles
+description: Core product management principles, user research methods, MVP definition, and definition of done
+---
+
+# Product Management Principles
 
 ## Core PM Principles
 
@@ -20,21 +25,6 @@
 - **A/B testing** — which variant achieves better outcomes at scale?
 - **Beta feedback** — structured feedback from early adopters
 
-## Prioritization Frameworks
-
-### RICE Score
-- **Reach** — how many users affected per time period?
-- **Impact** — how much does it move the metric? (1=minimal, 3=massive)
-- **Confidence** — how sure are we? (expressed as %)
-- **Effort** — person-weeks to build
-- Score = (Reach × Impact × Confidence) / Effort
-
-### MoSCoW
-- **Must have** — without this, the product fails
-- **Should have** — important but workarounds exist
-- **Could have** — nice to have, cut if time is tight
-- **Won't have** — explicitly out of scope for this release
-
 ## MVP Definition
 
 An MVP is the smallest thing that proves (or disproves) your core hypothesis.
@@ -48,13 +38,6 @@ An MVP IS:
 - One user journey, done end-to-end
 - Enough to get real feedback from real users
 - Deployable and measurable
-
-## Stakeholder Communication
-
-- **Weekly status**: what shipped, what's next, what's blocked — 5 bullets max
-- **Scope changes**: always quantify impact on timeline before escalating
-- **Feature requests from stakeholders**: "What outcome are you trying to drive?" before writing a line of spec
-- **Engineering pushback**: legitimate technical concerns modify scope; never override without understanding the constraint
 
 ## Definition of Done (Product Perspective)
 

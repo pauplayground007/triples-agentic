@@ -1,3 +1,8 @@
+---
+name: estimation
+description: Fibonacci story points, time estimates, planning poker, velocity tracking, and release planning
+---
+
 # Estimation Knowledge — Story Points & Time Estimates
 
 ## Story Points (Fibonacci Scale)

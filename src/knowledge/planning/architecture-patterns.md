@@ -1,4 +1,9 @@
-# Architecture Knowledge — System Design Patterns
+---
+name: architecture-patterns
+description: Software architecture patterns (layered, event-driven, microservices, CQRS) with trade-off analysis
+---
+
+# Architecture Patterns
 
 ## Foundational Principles
 
@@ -57,42 +62,3 @@ Read path: Read Store (denormalized views)
 - Single endpoint, client specifies exact data shape
 - Use when: multiple clients (web, mobile) with different data needs
 - Avoid when: simple CRUD, team unfamiliar with the overhead
-
-## Database Selection Guide
-
-| Need | Recommended | Why |
-|---|---|---|
-| Relational data, ACID transactions | PostgreSQL | Industry standard, excellent tooling |
-| Simple key-value cache | Redis | Fast, well-supported |
-| Document storage, flexible schema | MongoDB | Schema flexibility, good horizontal scaling |
-| Full-text search | Elasticsearch / Meilisearch | Built for search |
-| Time-series data | TimescaleDB / InfluxDB | Efficient for append-heavy, time-indexed data |
-| Graph relationships | Neo4j | Native graph traversal |
-
-Default to **PostgreSQL** unless there is a specific, documented reason not to.
-
-## Security Fundamentals
-
-- **Authentication**: Prefer JWT for stateless APIs; sessions for server-rendered apps
-- **Authorization**: RBAC (Role-Based Access Control) for most systems; ABAC for complex policy
-- **Secrets management**: Never commit secrets. Use environment variables + secrets manager (Vault, AWS SSM)
-- **Input validation**: Validate and sanitize at the API boundary; never trust client input
-- **HTTPS everywhere**: TLS 1.2 minimum; redirect all HTTP to HTTPS
-
-## Scalability Checklist
-
-Before designing for scale, verify you actually need it. Then:
-- [ ] Stateless application servers (scale horizontally, not vertically)
-- [ ] Database read replicas for read-heavy workloads
-- [ ] CDN for static assets
-- [ ] Caching layer (Redis) for expensive computed results
-- [ ] Async queues for long-running tasks
-- [ ] Rate limiting at API gateway
-
-## Observability Stack
-
-Every production system needs:
-- **Logging**: structured JSON logs, correlation IDs across service calls
-- **Metrics**: request rate, error rate, latency (p50/p95/p99)
-- **Tracing**: distributed trace IDs through all service hops
-- **Alerting**: page on error rate spikes and latency degradation, not on CPU%

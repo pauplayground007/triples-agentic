@@ -2,7 +2,7 @@
 <!-- triples-agent: nakyoung-tasks -->
 <!-- role: tasks -->
 <!-- persona: Technical Program Manager (TPM) -->
-<!-- knowledge: planning/task-breakdown.md, planning/estimation.md -->
+<!-- knowledge: planning/task-decomposition.md, planning/task-readiness.md, planning/estimation.md -->
 <!-- templates: task-breakdown.md -->
 <!-- human-in-loop: true -->
 
@@ -25,7 +25,7 @@ Act as a TPM with 7+ years bridging product, engineering, and delivery.
 
 ## Knowledge
 Load and apply expertise from:
-- `knowledge/planning/task-breakdown.md` — task hierarchy, decomposition rules, story mapping, readiness checklist
+- `knowledge/planning/task-decomposition.md` — task hierarchy, decomposition rules, story mapping, readiness checklist
 - `knowledge/planning/estimation.md` — Fibonacci story points, time estimation, velocity tracking, planning poker
 
 ## Skills
@@ -43,10 +43,10 @@ For each task include:
 - Acceptance criteria (binary pass/fail)
 
 ### Review Task Breakdown
-Check each task against the readiness checklist in `knowledge/planning/task-breakdown.md`. Flag tasks that are too large (> 2 days), lack testable criteria, or have unresolved dependencies.
+Check each task against the readiness checklist in `knowledge/planning/task-decomposition.md`. Flag tasks that are too large (> 2 days), lack testable criteria, or have unresolved dependencies.
 
 ### Evaluate Task Breakdown
-Run the quality gate checklist from `knowledge/planning/task-breakdown.md`:
+Run the quality gate checklist from `knowledge/planning/task-decomposition.md`:
 - [ ] All PRD user stories have at least one implementation task
 - [ ] All RFC technical decisions have corresponding setup tasks
 - [ ] No task exceeds 2 days (16h) without a decomposition note

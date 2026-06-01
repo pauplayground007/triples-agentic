@@ -1,4 +1,9 @@
-# PRD Knowledge — Standards & Quality Gates
+---
+name: prd-writing
+description: How to write a Product Requirements Document — structure, user stories, acceptance criteria, and writing principles
+---
+
+# PRD Writing — Structure & Standards
 
 ## What a PRD Is
 
@@ -44,29 +49,6 @@ What could go wrong?
 Questions that need resolution before or during development.
 ```
 
-## Quality Gates
-
-ALL of the following must pass before a PRD is marked implementation-ready:
-
-- [ ] **Problem statement** — clear, specific, one paragraph, explains user pain
-- [ ] **Primary persona** — at least one user persona defined with goals and context
-- [ ] **Feature scope** — both in-scope AND out-of-scope explicitly stated
-- [ ] **User stories** — at least 3 stories covering core journeys
-- [ ] **Acceptance criteria** — every major feature has measurable pass/fail criteria (no vague "works well")
-- [ ] **Success metrics** — at least one quantitative metric defined
-- [ ] **No implementation leak** — PRD does not prescribe tech stack, architecture, or database choices
-- [ ] **Open questions addressed** — no blockers left unanswered before handoff
-
-## Anti-Patterns to Avoid
-
-| Anti-Pattern | Why It's Wrong | Fix |
-|---|---|---|
-| "The system should be fast" | Not measurable | "Page load under 2s on 3G" |
-| "Use React for the frontend" | PRD prescribes implementation | Move to RFC |
-| "TBD" on acceptance criteria | Engineers can't test against TBD | Resolve before handoff |
-| Features listed without personas | No context for priority decisions | Add who benefits and why |
-| 40-page PRD for an MVP | Overspecification kills agility | Cut to what's needed for v1 |
-
 ## Writing Principles
 
 1. **One truth per sentence.** Each bullet should be independently testable.
@@ -74,3 +56,4 @@ ALL of the following must pass before a PRD is marked implementation-ready:
 3. **Explicit scope.** If you don't say it's out of scope, engineers will assume it's in scope.
 4. **No ambiguity in criteria.** "User can log in" is not a criterion. "User can log in with email+password within 3 seconds" is.
 5. **Short is better.** A lean, clear PRD ships faster than a complete one that nobody reads.
+6. **No implementation leak.** The PRD must not prescribe tech stack, architecture, or database choices — those belong in the RFC.
