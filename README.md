@@ -220,10 +220,25 @@ SeoYeon walks you through the complete workflow and delegates to each agent.
 Use `/skills` to browse installed TripleS skills, or mention them directly in your prompt:
 
 ```text
-Use $seoyeon to orchestrate this feature from PRD through QA.
+Use $seoyeon to orchestrate this feature from PRD through QA with human review gates and a QA rework loop.
 Use $jiwoo-prd to draft the PRD for this feature.
 Use $kaede-backend to implement the backend task from the breakdown.
 ```
+
+### Claude + Codex continuity
+
+SeoYeon handoffs include both platform forms so you can continue the same run in either assistant:
+
+```text
+Next agent: JiWoo PRD
+Claude: /jiwoo-prd
+Codex: Use $jiwoo-prd
+Input artifacts: workspace/PRD.md
+Task: Review and revise until READY.
+Open decisions: none
+```
+
+Artifacts in `workspace/` are the source of truth, not chat memory.
 
 ### With other coding assistants
 Ask for the agent by name — e.g., "Act as JiWoo and create a PRD for [description]"
@@ -232,7 +247,7 @@ Ask for the agent by name — e.g., "Act as JiWoo and create a PRD for [descript
 
 ## Human-in-the-Loop Gates
 
-JiWoo, YooYeon, NaKyoung, and Lynn all have built-in review loops:
+JiWoo, HyeRin, YooYeon, NaKyoung, and Lynn all have built-in review loops:
 
 1. Agent creates artifact
 2. Agent reviews against quality gate checklist
@@ -241,7 +256,13 @@ JiWoo, YooYeon, NaKyoung, and Lynn all have built-in review loops:
 5. User provides clarifications
 6. Agent updates and loops → repeat until `READY`
 
-This ensures PRD, RFC, task breakdown, and test cases are implementation-ready before moving forward.
+This ensures PRD, design spec, RFC, task breakdown, and test cases are implementation-ready before moving forward.
+
+## QA Rework Loop
+
+If ShiOn returns `QA COMPLETE — NO-GO`, SeoYeon routes defects back to the owning developer agents, then asks ShiOn to re-test fixes and regression-risk areas. The loop repeats until `QA COMPLETE — GO` or the human explicitly accepts documented release risk.
+
+Escalation happens when the same QA defect survives 2 fix attempts, the same planning gate fails 3 times, or a fix requires changing approved scope, design behavior, or architecture.
 
 ---
 

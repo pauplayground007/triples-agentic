@@ -117,6 +117,25 @@ flowchart TD
     Done(["✅ Delivery Complete\nQA_REPORT.md\nDELIVERY_SUMMARY.md"])
 ```
 
+### Defect Rework Loop (post-QA convergence)
+
+```mermaid
+flowchart TD
+    ShiOnResult{ShiOn\nGo/No-Go?}
+    ShiOnResult -->|"✅ GO"| Delivery["✅ Delivery Complete"]
+    ShiOnResult -->|"❌ NO-GO"| SeoYeonTriage["SeoYeon reads\nQA_REPORT.md + BUGS/"]
+
+    SeoYeonTriage --> RouteDefects["Group defects\nby platform agent"]
+    RouteDefects --> DevFix["Developer agents\nfix assigned defects"]
+    DevFix --> ShiOnRetest["ShiOn retests\nfixed defects + regression"]
+    ShiOnRetest --> ShiOnResult2{Re-test\nGo/No-Go?}
+    ShiOnResult2 -->|"✅ GO"| Delivery
+    ShiOnResult2 -->|"❌ NO-GO\n(same defect ×2)"| HumanEscalation["🧑 Human Escalation\nSeoYeon presents options"]
+    ShiOnResult2 -->|"❌ NO-GO\n(new defects)"| SeoYeonTriage
+    HumanEscalation -->|"Accept risk"| Delivery
+    HumanEscalation -->|"Fix required"| DevFix
+```
+
 ---
 
 ## Human-in-the-Loop Gates
@@ -159,13 +178,46 @@ workspace/
 
 ---
 
+## Cross-Platform Handoff Contract
+
+TripleS can run in Claude Code or OpenAI Codex. SeoYeon should hand off work using both platform forms so a user can continue in either assistant:
+
+```text
+Next agent: JiWoo PRD
+Claude: /jiwoo-prd
+Codex: Use $jiwoo-prd
+Input artifacts: workspace/PRD.md
+Task: Review and revise until READY.
+Open decisions: none
+```
+
+Use artifact paths as the source of truth. Do not rely on hidden conversation memory between tools.
+
+---
+
+## Convergence Rules
+
+- Planning stages loop through **Create → Review → Evaluate → Human Review → Revise** until `READY`.
+- Development starts only after PRD, Design, RFC, and Task Breakdown are approved.
+- Test cases can run in parallel with development after task approval.
+- QA `NO-GO` routes defects back to owning developer agents, then returns to ShiOn for re-test.
+- Human escalation happens after the same planning gate fails 3 times or the same QA defect survives 2 fix attempts.
+- Approved artifact changes that affect scope, architecture, design behavior, or release risk require human sign-off.
+
+---
+
 ## Quick Start
 
-### Full pipeline
+### Full pipeline — Claude Code
 ```
 /seoyeon run
 ```
 SeoYeon walks you through the entire workflow, delegating to each agent in sequence.
+
+### Full pipeline — OpenAI Codex
+```text
+Use $seoyeon to orchestrate this feature from PRD through QA with human review gates and a QA rework loop.
+```
 
 ### Individual agents
 ```

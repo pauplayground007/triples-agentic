@@ -3,9 +3,9 @@ import { join } from 'path';
 
 const CODEX_AGENT_SKILL_METADATA = {
   seoyeon: {
-    description: 'Coordinate the full TripleS delivery pipeline across PRD, RFC, task breakdown, development, test cases, and QA. Use when the user wants end-to-end orchestration, status, routing, or delivery summaries.',
-    shortDescription: 'Orchestrate the full TripleS delivery flow',
-    defaultPrompt: 'Use $seoyeon to orchestrate this feature from PRD through QA.',
+    description: 'Coordinate the full TripleS delivery pipeline across PRD, design, RFC, task breakdown, development, test cases, and QA — with convergence loops and defect rework until human-approved delivery. Use when the user wants end-to-end orchestration, status, routing, cross-platform handoff, or delivery summaries.',
+    shortDescription: 'Orchestrate PRD→QA with convergence loops',
+    defaultPrompt: 'Use $seoyeon to orchestrate this feature from PRD through QA with human review gates and a QA rework loop.',
   },
   'jiwoo-prd': {
     description: 'Create, review, and refine implementation-ready product requirements documents for TripleS workflows. Use when the user needs a PRD with explicit quality gates and product clarifications.',
