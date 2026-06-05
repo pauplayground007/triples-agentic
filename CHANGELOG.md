@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.2] — 2026-06-05
+
+### Fixed
+- update repository URLs to reflect new ownership (`65ecb10`)
+
+[2.6.2]: https://github.com/putrautama007/triples-agentic/compare/v2.6.1...v2.6.2
+
 ## [2.6.1] — 2026-06-05
 
 
