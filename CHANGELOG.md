@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.0] — 2026-06-05
+
+### Added
+- add convergence loop and cross-platform handoff to orchestrator (`febc656`)
+
+[2.6.0]: https://github.com/pauplayground007/triples-agentic/compare/v2.5.0...v2.6.0
+
 ## [2.5.0] — 2026-06-05
 
 ### Added
