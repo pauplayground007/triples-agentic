@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.7.0] — 2026-06-06
+
+### Added
+- Enhance project setup capabilities with ChaeWon agent and update documentation (`1f7e64b`)
+- Add comprehensive skills and references for planning, quality, and backend testing (`37c494b`)
+
+[2.7.0]: https://github.com/putrautama007/triples-agentic/compare/v2.6.2...v2.7.0
+
 ## [2.6.2] — 2026-06-05
 
 ### Fixed
