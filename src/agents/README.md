@@ -75,7 +75,7 @@ The installer (`src/bin/setup.js`) wraps each agent file in platform-specific fr
 | Claude Code | `.claude/skills/<slug>.md` | YAML `name` + `description` |
 | Cursor AI | `.cursor/rules/<slug>.mdc` | `description` + `alwaysApply: false` |
 | GitHub Copilot | `.github/instructions/<slug>.instructions.md` | `applyTo: "**"` |
-| OpenAI Codex | Section in `AGENTS.md` | Inline separator |
+| OpenAI Codex | `.codex/skills/<slug>/SKILL.md` + supplemental project `AGENTS.md` | Skill bundle frontmatter + managed root guidance |
 | Windsurf | Section in `.windsurfrules` | Inline heading |
 
 ---

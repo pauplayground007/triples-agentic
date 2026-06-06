@@ -68,6 +68,46 @@ function writeFile(filePath, content) {
   console.log(`  ✓ ${display(filePath)}`);
 }
 
+const MANAGED_DOC_START = '<!-- triples-agentic:start -->';
+const MANAGED_DOC_END = '<!-- triples-agentic:end -->';
+
+function readInitDocTemplate(templateName) {
+  const templatePath = join(KNOWLEDGE_DIR, 'planning', 'init-project', 'references', templateName);
+  return readFileSync(templatePath, 'utf-8').trimEnd() + '\n';
+}
+
+function extractManagedBlock(content) {
+  const start = content.indexOf(MANAGED_DOC_START);
+  const end = content.indexOf(MANAGED_DOC_END);
+  if (start === -1 || end === -1 || end < start) return null;
+  return content.slice(start, end + MANAGED_DOC_END.length);
+}
+
+function installManagedProjectDoc(targetPath, templateName, { legacyMarker = '' } = {}) {
+  const template = readInitDocTemplate(templateName);
+  const managedBlock = extractManagedBlock(template);
+  if (!managedBlock) throw new Error(`Managed markers missing in ${templateName}`);
+
+  if (!existsSync(targetPath)) {
+    writeFile(targetPath, template);
+    return;
+  }
+
+  const existing = readFileSync(targetPath, 'utf-8');
+  const existingBlock = extractManagedBlock(existing);
+  if (existingBlock) {
+    writeFile(targetPath, existing.replace(existingBlock, managedBlock).trimEnd() + '\n');
+    return;
+  }
+
+  if (legacyMarker && existing.includes(legacyMarker)) {
+    writeFile(targetPath, template);
+    return;
+  }
+
+  console.log(`  ↷ skipped existing user-owned ${display(targetPath)}`);
+}
+
 /** Parse name/description from YAML frontmatter block (--- ... ---) */
 function parseFrontmatter(content) {
   const match = content.match(/^---\r?\n([\s\S]+?)\r?\n---/);
@@ -199,13 +239,6 @@ function loadHookFiles() {
     .map(f => JSON.parse(readFileSync(join(HOOKS_DIR, f), 'utf-8')));
 }
 
-/** Returns Claude Code PreToolUse hook entries from src/hooks/*.json platforms.claude */
-function loadClaudeHooks() {
-  return loadHookFiles()
-    .filter(h => h.platforms?.claude)
-    .map(h => h.platforms.claude);
-}
-
 /** Returns Codex PreToolUse hook entries from src/hooks/*.json platforms.codex */
 function loadCodexHooks() {
   return loadHookFiles()
@@ -256,12 +289,16 @@ function createInstallerContext() {
     projectDir,
     isGlobal,
     allAgents,
+    allKnowledgeSkills,
+    knowledgeSkillContent,
+    loadHookFiles,
     loadCodexHooks,
     stripAgentMetadataComments,
     yamlEscape,
     tomlEscape,
     display,
     writeFile,
+    installManagedProjectDoc,
   };
 }
 
@@ -269,33 +306,11 @@ async function loadCodexInstaller() {
   return import('./setup/codex.js');
 }
 
-// ─── Platform installers ──────────────────────────────────────────────────────
-
-/** Write (or merge) PreToolUse hooks from platforms.claude into .claude/settings.json */
-function installClaudeSettings(claudeDir) {
-  const hookEntries = loadClaudeHooks();
-  if (hookEntries.length === 0) return;
-
-  const settingsPath = join(claudeDir, 'settings.json');
-  let settings = {};
-  if (existsSync(settingsPath)) {
-    try { settings = JSON.parse(readFileSync(settingsPath, 'utf-8')); } catch {}
-  }
-  settings.hooks = settings.hooks || {};
-
-  const events = [...new Set(hookEntries.map(e => e.event).filter(Boolean))];
-  for (const event of events) {
-    const incoming = hookEntries.filter(e => e.event === event);
-    const existing = settings.hooks[event] || [];
-    const matchers = new Set(incoming.map(e => e.matcher));
-    settings.hooks[event] = [
-      ...existing.filter(e => !matchers.has(e.matcher) || !e.hooks?.some(h => h.statusMessage === 'Checking for dangerous commands...')),
-      ...incoming.map(({ event: _e, ...entry }) => entry),
-    ];
-  }
-
-  writeFile(settingsPath, JSON.stringify(settings, null, 2));
+async function loadClaudeInstaller() {
+  return import('./setup/claude.js');
 }
+
+// ─── Platform installers ──────────────────────────────────────────────────────
 
 /** Write (or merge) Windsurf hooks from platforms.windsurf into .windsurf/hooks.json */
 function installWindsurfSettings(base) {
@@ -319,24 +334,9 @@ function installWindsurfSettings(base) {
   writeFile(hooksPath, JSON.stringify(config, null, 2));
 }
 
-function installClaude(base) {
-  const dest = isGlobal && !base ? GLOBAL_PATHS.claude : join(base || projectDir, '.claude', 'skills');
-  console.log(`\nInstalling Claude Code skills → ${display(dest)}`);
-
-  // Agents
-  for (const { name, content, persona } of allAgents()) {
-    const skill = ['---', `name: ${name}`, `description: TripleS agent — ${name} (${persona})`, '---', '', content].join('\n');
-    writeFile(join(dest, `${name}.md`), skill);
-  }
-
-  // Knowledge skills — best-practice skill bundles with lean SKILL.md + one-level references
-  for (const skill of allKnowledgeSkills()) {
-    writeFile(join(dest, skill.slug, 'SKILL.md'), knowledgeSkillContent(skill));
-    writeFile(join(dest, skill.slug, 'references', skill.fileName), skill.referenceContent);
-  }
-
-  // Settings — dangerous command hook (enforced at harness level)
-  installClaudeSettings(dirname(dest));
+async function installClaude(base) {
+  const { installClaude: runClaudeInstall } = await loadClaudeInstaller();
+  runClaudeInstall(base, createInstallerContext());
 }
 
 function installCursor(base) {
@@ -440,8 +440,10 @@ const PLATFORM_LABELS = {
 // ─── Success banner ───────────────────────────────────────────────────────────
 
 const AGENT_COMMANDS = [
+  ['chaewon-init-setup', 'Project Setup — initialize and audit local install'],
   ['seoyeon',        'Engineering Manager — orchestrates all agents'],
   ['jiwoo-prd',      'Senior PM — create & review PRD'],
+  ['hyerin-design',  'Senior UI/UX — create & review design spec'],
   ['yooyeon-rfc',    'Staff Engineer — create & review RFC'],
   ['nakyoung-tasks', 'TPM — task breakdown with estimates'],
   ['yubin-frontend', 'Principal Frontend — implement web UI'],
@@ -463,7 +465,7 @@ const KNOWLEDGE_SUMMARY = {
                    'product-prioritization', 'rfc-writing', 'rfc-quality-gates',
                    'architecture-patterns', 'architecture-database', 'architecture-security',
                    'task-decomposition', 'task-readiness', 'estimation',
-                   'decision-log-discipline', 'implementation-readiness'],
+                   'decision-log-discipline', 'implementation-readiness', 'init-project'],
   'web/frontend':  ['frontend-components', 'frontend-state', 'frontend-performance',
                    'frontend-data-fetching', 'web-accessibility', 'web-performance', 'web-security',
                    ],
@@ -491,10 +493,8 @@ async function detectInstallations() {
   };
 
   // Claude
-  if (hasFile(GLOBAL_PATHS.claude, 'seoyeon.md'))
-    found.push({ platform: 'claude', isGlobal: true });
-  if (hasFile(projectDir, '.claude', 'skills', 'seoyeon.md'))
-    found.push({ platform: 'claude', isGlobal: false });
+  const { detectClaudeInstallations } = await loadClaudeInstaller();
+  found.push(...detectClaudeInstallations(createInstallerContext()));
 
   // Cursor
   if (hasFile(GLOBAL_PATHS.cursor, 'seoyeon.mdc'))

@@ -7,6 +7,11 @@ const CODEX_AGENT_SKILL_METADATA = {
     shortDescription: 'Orchestrate PRD→QA with convergence loops',
     defaultPrompt: 'Use $seoyeon to orchestrate this feature from PRD through QA with human review gates and a QA rework loop.',
   },
+  'chaewon-init-setup': {
+    description: 'Explain, audit, and initialize local TripleS project setup for Claude, Codex, and other coding agents. Use when the user needs setup guidance, installed file explanations, root doc guidance, or update/reinstall help.',
+    shortDescription: 'Initialize and audit local TripleS setup',
+    defaultPrompt: 'Use $chaewon-init-setup to explain or audit the local TripleS project setup.',
+  },
   'jiwoo-prd': {
     description: 'Create, review, and refine implementation-ready product requirements documents for TripleS workflows. Use when the user needs a PRD with explicit quality gates and product clarifications.',
     shortDescription: 'Create and review implementation-ready PRDs',
@@ -219,26 +224,10 @@ function writeCodexKnowledgeSkillBundles(skillsRoot, ctx) {
   }
 }
 
-function maybeRewriteLegacyCodexAgentsDoc(targetPath, skillsRoot, ctx) {
-  const { display, writeFile } = ctx;
-  if (!existsSync(targetPath)) return;
-
-  let existing = '';
-  try { existing = readFileSync(targetPath, 'utf-8'); } catch { return; }
-  if (!existing.includes('TripleS Agent Orchestrator')) return;
-
-  const compatDoc = [
-    '# TripleS Agentic for Codex',
-    '',
-    'TripleS workflows are installed as Codex skills, not as a generated agent catalog in this file.',
-    '',
-    `- Skills root: \`${display(skillsRoot)}\``,
-    '- In Codex, use `/skills` to browse them or mention a skill directly such as `$seoyeon` or `$jiwoo-prd`.',
-    '- The actual workflow instructions now live in each skill bundle under `SKILL.md`.',
-    '',
-  ].join('\n');
-
-  writeFile(targetPath, compatDoc);
+function installCodexAgentsDoc(targetPath, ctx) {
+  ctx.installManagedProjectDoc(targetPath, 'agents-template.md', {
+    legacyMarker: 'TripleS Agent Orchestrator',
+  });
 }
 
 function installCodexSettings(base, ctx) {
@@ -283,10 +272,9 @@ export function installCodex(base, ctx) {
 
   writeCodexKnowledgeSkillBundles(skillsRoot, ctx);
 
-  const legacyAgentsPath = isGlobal && !base
-    ? join(GLOBAL_PATHS.codex, 'AGENTS.md')
-    : join(base || projectDir, 'AGENTS.md');
-  maybeRewriteLegacyCodexAgentsDoc(legacyAgentsPath, skillsRoot, ctx);
+  if (!isGlobal || base) {
+    installCodexAgentsDoc(join(base || projectDir, 'AGENTS.md'), ctx);
+  }
   installCodexSettings(base, ctx);
 }
 

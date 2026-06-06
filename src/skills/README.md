@@ -51,7 +51,7 @@ Reference docs hold the full domain detail. Templates are placed alongside refer
 ```text
 skills/
 ├── coding-principles/           Coding principles — loaded by developer agents
-├── planning/          Loaded by SeoYeon, JiWoo, YooYeon, NaKyoung
+├── planning/          Loaded by InitSetup, SeoYeon, JiWoo, YooYeon, NaKyoung
 ├── design/            Loaded by HyeRin
 ├── web/
 │   ├── frontend/      Loaded by YuBin
