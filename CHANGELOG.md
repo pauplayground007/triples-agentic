@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.7.2] — 2026-06-06
+
+### Fixed
+- install agents as SKILL.md directories for reliable Claude Code detection (`3f2a2b1`)
+
+[2.7.2]: https://github.com/putrautama007/triples-agentic/compare/v2.7.1...v2.7.2
+
 ## [2.7.1] — 2026-06-06
 
 ### Fixed
